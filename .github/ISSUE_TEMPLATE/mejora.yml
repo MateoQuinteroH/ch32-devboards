@@ -1,0 +1,24 @@
+name: Propuesta de mejora
+description: Sugiere una funcionalidad o cambio de diseño.
+title: "[Mejora] "
+labels: ["mejora"]
+body:
+  - type: dropdown
+    id: placa
+    attributes:
+      label: Placa
+      options: [X035, L103, Ambas, Documentación]
+    validations:
+      required: true
+  - type: textarea
+    id: propuesta
+    attributes:
+      label: Propuesta
+      description: ¿Qué quieres cambiar o añadir, y por qué?
+    validations:
+      required: true
+  - type: textarea
+    id: impacto
+    attributes:
+      label: Impacto
+      description: ¿Cambia el pinout, el tamaño o la compatibilidad con revisiones anteriores?

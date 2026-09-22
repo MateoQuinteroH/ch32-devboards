@@ -1,0 +1,120 @@
+# Configuración de KiBot: verificaciones y archivos de fabricación.
+# Documentación: https://kibot.readthedocs.io
+kibot:
+  version: 1
+
+global:
+  # Nombre de salida: <proyecto>-<revisión>-<id>.<ext>
+  output: '%f-%r-%i.%x'
+
+preflight:
+  # Falla si hay errores de reglas eléctricas o de diseño
+  erc: true
+  drc: true
+  check_zone_fills: true
+  # Sustituye ${GIT_HASH} en la serigrafía por el commit actual
+  set_text_variables:
+    - name: 'GIT_HASH'
+      command: 'git log -1 --format="%h"'
+
+outputs:
+  # ---------- Documentación ----------
+  - name: esquematico_pdf
+    comment: Esquemático en PDF
+    type: pdf_sch_print
+    dir: docs
+
+  - name: ibom
+    comment: BOM interactivo para ensamblaje manual
+    type: ibom
+    dir: docs
+    options:
+      extra_fields: 'Value,LCSC,MPN'
+      dark_mode: false
+
+  - name: render_top
+    comment: Render 3D, cara superior
+    type: render_3d
+    dir: docs
+    options:
+      view: top
+      ray_tracing: true
+      zoom: 1
+
+  - name: render_bottom
+    comment: Render 3D, cara inferior
+    type: render_3d
+    dir: docs
+    options:
+      view: bottom
+      ray_tracing: true
+      zoom: 1
+
+  # ---------- BOM ----------
+  - name: bom_csv
+    comment: Lista de materiales con referencias de distribuidores
+    type: bom
+    dir: bom
+    options:
+      format: CSV
+      columns:
+        - field: References
+          name: Referencias
+        - field: Value
+          name: Valor
+        - field: Footprint
+          name: Footprint
+        - field: Quantity Per PCB
+          name: Cantidad
+        - field: MPN
+        - field: Manufacturer
+          name: Fabricante
+        - field: LCSC
+        - field: Mouser
+        - field: Digikey
+
+  # ---------- Fabricación ----------
+  - name: gerbers
+    comment: Gerbers para el fabricante de PCB
+    type: gerber
+    dir: fabricacion/gerbers
+    layers:
+      - copper
+      - F.SilkS
+      - B.SilkS
+      - F.Mask
+      - B.Mask
+      - F.Paste
+      - B.Paste
+      - Edge.Cuts
+    options:
+      subtract_mask_from_silk: true
+      create_gerber_job_file: true
+
+  - name: taladros
+    comment: Archivos de taladrado
+    type: excellon
+    dir: fabricacion/gerbers
+    options:
+      pth_and_npth_single_file: false
+
+  - name: posiciones
+    comment: Posición de componentes (pick and place)
+    type: position
+    dir: fabricacion
+    options:
+      format: CSV
+      units: millimeters
+      only_smd: true
+
+  - name: paquete_fabricacion
+    comment: ZIP listo para enviar al fabricante
+    type: compress
+    dir: .
+    options:
+      format: ZIP
+      files:
+        - from_output: gerbers
+          dest: /
+        - from_output: taladros
+          dest: /

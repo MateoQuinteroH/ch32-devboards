@@ -1,0 +1,13 @@
+# Archivos de KiCad: texto con finales de línea LF
+*.kicad_pro   text eol=lf
+*.kicad_sch   text eol=lf
+*.kicad_pcb   text eol=lf
+*.kicad_sym   text eol=lf
+*.kicad_mod   text eol=lf
+*-lib-table   text eol=lf
+
+# Modelos 3D: si pesan mucho, activa Git LFS descomentando estas líneas
+# (requiere `git lfs install` antes del primer commit que los incluya)
+# *.step filter=lfs diff=lfs merge=lfs -text
+# *.stp  filter=lfs diff=lfs merge=lfs -text
+# *.wrl  filter=lfs diff=lfs merge=lfs -text

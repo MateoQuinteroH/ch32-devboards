@@ -1,0 +1,33 @@
+name: Problema de firmware
+description: Un ejemplo no compila o no funciona como se espera.
+title: "[Firmware] "
+labels: ["firmware"]
+body:
+  - type: dropdown
+    id: placa
+    attributes:
+      label: Placa
+      options: [X035, L103]
+    validations:
+      required: true
+  - type: input
+    id: ejemplo
+    attributes:
+      label: Ejemplo afectado
+      placeholder: firmware/examples/blink
+    validations:
+      required: true
+  - type: dropdown
+    id: herramienta
+    attributes:
+      label: Entorno
+      options: [MounRiver Studio, Arduino IDE, PlatformIO, ch32fun, Otro]
+    validations:
+      required: true
+  - type: textarea
+    id: descripcion
+    attributes:
+      label: Descripción y mensajes de error
+      render: text
+    validations:
+      required: true

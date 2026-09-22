@@ -1,0 +1,33 @@
+# --- KiCad: archivos temporales y locales ---
+*-backups/
+_autosave-*
+*.kicad_prl
+fp-info-cache
+*.lck
+~*.lck
+\#auto_saved_files#
+*.bak
+*.bck
+*.kicad_pcb-bak
+*.kicad_sch-bak
+
+# --- Salidas generadas (se publican en las Releases, no en Git) ---
+output/
+hardware/*/production/
+hardware/*/fabricacion/
+*.zip
+
+# --- Firmware ---
+build/
+obj/
+.pio/
+*.elf
+*.hex
+*.bin
+*.map
+
+# --- Sistema y editores ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

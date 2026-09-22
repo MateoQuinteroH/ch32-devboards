@@ -1,0 +1,32 @@
+version = 1
+SPDX-PackageName = "ch32-devboards"
+SPDX-PackageSupplier = "Mateo Quintero <mateoq9512@gmail.com>"
+SPDX-PackageDownloadLocation = "https://github.com/MateoQuinteroH/ch32-devboards"
+
+# Hardware y librerías
+[[annotations]]
+path = ["hardware/**", "lib/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Mateo Quintero"
+SPDX-License-Identifier = "CERN-OHL-S-2.0"
+
+# Firmware
+[[annotations]]
+path = ["firmware/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Mateo Quintero"
+SPDX-License-Identifier = "MIT"
+
+# Documentación
+[[annotations]]
+path = ["docs/**", "*.md"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Mateo Quintero"
+SPDX-License-Identifier = "CC-BY-SA-4.0"
+
+# Archivos de configuración
+[[annotations]]
+path = [".github/**", ".gitignore", ".gitattributes", "REUSE.toml"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Mateo Quintero"
+SPDX-License-Identifier = "CC0-1.0"

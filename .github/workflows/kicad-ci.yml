@@ -1,0 +1,51 @@
+# Verifica el diseño (ERC/DRC) y genera las salidas en cada push y pull request.
+name: KiCad CI
+
+on:
+  push:
+    branches: [main]
+    paths: ['hardware/**', 'lib/**', '.github/workflows/kicad-ci.yml']
+  pull_request:
+    paths: ['hardware/**', 'lib/**', '.github/workflows/kicad-ci.yml']
+
+jobs:
+  kibot:
+    runs-on: ubuntu-latest
+    # Imagen con KiCad 9 + KiBot. Si cambias de versión de KiCad, cambia también esta imagen.
+    container: ghcr.io/inti-cmnb/kicad9_auto_full:latest
+    strategy:
+      fail-fast: false
+      matrix:
+        board: [x035, l103]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # necesario para ${GIT_HASH}
+
+      - name: Comprobar que el proyecto existe
+        id: check
+        run: |
+          if [ -f "hardware/${{ matrix.board }}/${{ matrix.board }}.kicad_pcb" ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "La placa ${{ matrix.board }} aún no tiene PCB; se omite."
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Ejecutar KiBot
+        if: steps.check.outputs.exists == 'true'
+        working-directory: hardware/${{ matrix.board }}
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          kibot -c kibot.yaml \
+                -b ${{ matrix.board }}.kicad_pcb \
+                -e ${{ matrix.board }}.kicad_sch \
+                -d "$GITHUB_WORKSPACE/output/${{ matrix.board }}"
+
+      - name: Subir salidas como artefacto
+        if: steps.check.outputs.exists == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.board }}-salidas
+          path: output/${{ matrix.board }}
+          retention-days: 30

@@ -1,0 +1,52 @@
+# Publica una Release con los archivos de fabricación al crear un tag.
+# Ejemplos de tag: x035-v1.0, l103-v1.1
+name: Release de hardware
+
+on:
+  push:
+    tags: ['x035-v*', 'l103-v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    container: ghcr.io/inti-cmnb/kicad9_auto_full:latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Identificar placa y versión desde el tag
+        id: meta
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          echo "board=${TAG%%-v*}" >> "$GITHUB_OUTPUT"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Generar salidas
+        working-directory: hardware/${{ steps.meta.outputs.board }}
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          B=${{ steps.meta.outputs.board }}
+          kibot -c kibot.yaml -b $B.kicad_pcb -e $B.kicad_sch \
+                -d "$GITHUB_WORKSPACE/output"
+
+      - name: Empaquetar
+        run: |
+          cd output
+          apt-get update -qq && apt-get install -y -qq zip > /dev/null
+          zip -r "../${{ steps.meta.outputs.tag }}-completo.zip" .
+
+      - name: Crear Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ steps.meta.outputs.tag }}
+          generate_release_notes: true
+          files: |
+            ${{ steps.meta.outputs.tag }}-completo.zip
+            output/*.zip
+            output/docs/*.pdf
+            output/docs/*.html
+            output/bom/*.csv

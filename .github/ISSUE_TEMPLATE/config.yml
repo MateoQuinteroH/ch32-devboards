@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Preguntas y discusión
+    url: https://github.com/MateoQuinteroH/ch32-devboards/discussions
+    about: Para dudas generales, usa Discussions en lugar de issues.

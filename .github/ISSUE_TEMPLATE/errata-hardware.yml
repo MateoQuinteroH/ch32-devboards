@@ -1,0 +1,37 @@
+name: Errata de hardware
+description: Reporta un error en una placa fabricada o en el diseño.
+title: "[Errata] "
+labels: ["hardware", "errata"]
+body:
+  - type: dropdown
+    id: placa
+    attributes:
+      label: Placa
+      options: [X035, L103]
+    validations:
+      required: true
+  - type: input
+    id: revision
+    attributes:
+      label: Revisión
+      description: La que aparece impresa en la serigrafía (por ejemplo, v1.0).
+      placeholder: v1.0
+    validations:
+      required: true
+  - type: textarea
+    id: sintoma
+    attributes:
+      label: ¿Qué ocurre?
+      description: Describe el síntoma y cómo reproducirlo.
+    validations:
+      required: true
+  - type: textarea
+    id: causa
+    attributes:
+      label: Causa sospechada
+      description: Si la conoces (componente, net, footprint...).
+  - type: textarea
+    id: fotos
+    attributes:
+      label: Fotos o capturas
+      description: Arrastra aquí fotos de la placa o capturas del esquemático.
