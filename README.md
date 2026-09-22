@@ -1,6 +1,6 @@
 # CH32 DevBoards
 
-Familia de tarjetas de desarrollo de **hardware abierto** basadas en microcontroladores RISC-V de WCH, diseñadas en KiCad para poder **soldarse a mano** (sin QFN ni BGA).
+Familia de tarjetas de desarrollo de **hardware abierto** basadas en microcontroladores RISC-V de WCH, diseñadas en KiCad.
 
 | Placa | MCU | Encapsulado | Enfoque | Estado |
 |---|---|---|---|---|
