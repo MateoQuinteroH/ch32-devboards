@@ -11,8 +11,25 @@ Familia de tarjetas de desarrollo de **hardware abierto** basadas en microcontro
 
 ## Características
 
-> Pendiente: la lista final de requerimientos se documentará aquí.
+**Comunes a ambas placas**
 
+- USB-C para alimentación, programación y comunicación (compatible con cargadores C-a-C)
+- Regulador de 3,3 V con protección de entrada y protección ESD en USB
+- Botones de reset y bootloader: carga de firmware por USB sin programador
+- Cabecera de depuración SDI para WCH-LinkE
+- LED de encendido, LED de usuario y LED RGB direccionable
+- UART accesible y jumper para medir el consumo del microcontrolador
+- Todos los pines en paso de 2,54 mm, compatible con protoboard
+- Agujeros de montaje
+- Soldable a mano: sin encapsulados QFN ni BGA
+
+**Solo en la L103**
+
+- Cargador de batería LiPo con conector JST-PH y medición del voltaje de batería
+- Cristal de 32,768 kHz y VBAT para el reloj de tiempo real
+- Footprint para transceptor CAN
+
+Los requerimientos completos, con su justificación, están en [docs/requirements.md](docs/requirements.md).
 ## Empezar
 
 1. Consigue la placa: descarga los archivos de fabricación de la [última release](../../releases) o fabrícala desde el código fuente.
