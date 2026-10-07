@@ -4,3 +4,5 @@ The Ch32L103 microcontroller will use a 3.3V power supply. This will be supplied
 
 This chip offers the following characteristics:
 
+* Fixed output at 3.3
+* $\theta$<sub>JA</sub>=15°C/W
