@@ -36,7 +36,7 @@ The Buck converter must ensure a constant output between 3.8V and 3.9V.
 The converter used is the TLV62569DBVR from TI in SOT-23-5 package.
 
 
-## 1. Parámetros de Diseño Básicos
+### Parámetros de Diseño Básicos
 * **Voltaje de Entrada (\(V_{IN}\)):** 5.0 V (Alimentación USB)
 * **Voltaje de Salida Objetivo (\(V_{OUT}\)):** 3.8 V (Voltaje de entrada óptimo para el LDO considerando un Dropout máximo de 400 mV)
 * **Corriente de Carga Máxima (\(I_{OUT}\)):** 600 mA (0.6 A)
