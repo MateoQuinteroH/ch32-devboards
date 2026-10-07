@@ -17,3 +17,8 @@ T<sub>J</sub>=25°C + (1.7W)(55°C/W) = 25°C + 93.5°C = 118.5°C
 
 This is below (but dangerously close) to the maximum 125°C value specified in the datasheet.
 
+For a 700mA current (70% of its capacity), we have:
+
+P<sub>D</sub> = (5V - 3-3V) * 0.7A = 1.7V * 1A = 1.19W
+
+T<sub>J</sub>=25°C + (1.19W)(55°C/W) = 25°C + 65.45°C = 90.45°C
