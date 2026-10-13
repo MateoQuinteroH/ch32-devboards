@@ -36,54 +36,54 @@ The Buck converter must ensure a constant output between 3.8V and 3.9V.
 The converter used is the TLV62569DBVR from TI in SOT-23-5 package.
 
 
-### Parámetros de Diseño Básicos
-* **Voltaje de Entrada (\(V_{IN}\)):** 5.0 V (Alimentación USB)
-* **Voltaje de Salida Objetivo (\(V_{OUT}\)):** 3.8 V (Voltaje de entrada óptimo para el LDO considerando un Dropout máximo de 400 mV)
-* **Corriente de Carga Máxima (\(I_{OUT}\)):** 600 mA (0.6 A)
-* **Frecuencia de Conmutación del Buck (\(f_{SW}\)):** 1.5 MHz (Fijo por el TLV62569DBVR)
-* **Voltaje de Referencia interno (\(V_{FB}\)):** 0.6 V
+### Basic Design Parameters
+* **Input voltage (\(V_{IN}\)):** 5.0 V (USB)
+* **Target Output Voltage (\(V_{OUT}\)):** 3.8 V (Optimal input voltage for the LDO, considering a maximum dropout of 400 mV.)
+* **Maximum Charging Current (\(I_{OUT}\)):** 600 mA (0.6 A)
+* **Buck Switching Frequency (\(f_{SW}\)):** 1.5 MHz (Fixed by TLV62569DBVR)
+* **Internal reference voltage (\(V_{FB}\)):** 0.6 V
 
 ---
 
-### Cálculo del Divisor de Voltaje Resistivo (R₁ y R₂)
-El pin de realimentación (`FB`) del TLV62569 regula la salida comparando el voltaje escalado externamente con su referencia interna de 0.6 V.
+### Resistive Voltage Divider Calculation (R₁ y R₂)
+The feedback pin (`FB`) of TLV62569 regulates the output by comparing the externally scaled voltage with its internal 0.6 V reference.
 
-La ecuación general de transferencia es:
+The general transfer equation is:
 \[V_{OUT} = V_{FB} \cdot \left(1 + \frac{R_1}{R_2}\right)\]
 
-Para mitigar el ruido en el nodo de alta impedancia pero manteniendo un consumo despreciable, se fija una resistencia inferior comercial estándar (R₂) dentro de la norma recomendada (< 100 kΩ):
+To mitigate noise at the high-impedance node while maintaining negligible power consumption, a standard commercial lower resistor (R₂) is selected within the recommended range (< 100 kΩ):
 \[R_2 = 18 \text{ k}\Omega \quad (\pm 1\%)\]
 
-Despejando la resistencia superior (R₁):
+Clearing the upper resistance (R₁):
 \[R_1 = R_2 \cdot \left(\frac{V_{OUT}}{V_{FB}} - 1\right)\]
 \[R_1 = 18 \text{ k}\Omega \cdot \left(\frac{3.8 \text{ V}}{0.6 \text{ V}} - 1\right)\]
 \[R_1 = 18 \text{ k}\Omega \cdot (6.3333 - 1) = 95.999 \text{ k}\Omega \approx \mathbf{96 \text{ k}\Omega}\]
 
-#### Componentes Seleccionados (Tolerancia 1%, E96):
-* **R₁ (Entre \(V_{OUT}\) y FB):** **96 kΩ** (O valor comercial más cercano: 95.3 kΩ)
-* **R₂ (Entre FB y GND):** **18 kΩ**
+#### Selected Components (Tolerance 1%, E96):
+* **R₁ (Between \(V_{OUT}\) y FB):** **96 kΩ** (O closest commercial value: 95.3 kΩ)
+* **R₂ (Between FB and GND):** **18 kΩ**
 
 ---
 
-### Cálculo del Inductor de Potencia (L)
-Para una operación estable a alta frecuencia (1.5 MHz), se define un rizado de corriente objetivo (\(\Delta I_L\)) del 30% sobre la corriente nominal máxima del sistema (600 mA):
+### Power inductor calculation (L)
+For stable high-frequency operation (1.5 MHz), a target current ripple (\(\Delta I_L\)) of 30% of the system's maximum rated current (600 mA) is defined.:
 \[\Delta I_L = 0.30 \cdot 0.6 \text{ A} = 0.18 \text{ A}\]
 
-La fórmula general para calcular la inductancia mínima requerida es:
+The general formula for calculating the minimum required inductance is:
 \[L = \frac{V_{OUT} \cdot (V_{IN} - V_{OUT})}{\Delta I_L \cdot f_{SW} \cdot V_{IN}}\]
 
-Sustituyendo los valores de diseño:
+Substituting the design values:
 \[L = \frac{3.8 \text{ V} \cdot (5.0 \text{ V} - 3.8 \text{ V})}{0.18 \text{ A} \cdot 1.500.000 \text{ Hz} \cdot 5.0 \text{ V}}\]
 \[L = \frac{3.8 \cdot 1.2}{1.350.000} = \frac{4.56}{1.350.000} \approx 3.377 \ \mu\text{H}\]
 
-#### Componente Seleccionado (Especificación para compra):
-* **Valor Comercial Recomendado:** **3.3 μH** (Se puede incrementar a **4.7 μH** para obtener una salida con menor rizado).
-* **Corriente de Saturación (\(I_{SAT}\)):** Mínimo **1.5 A** (Para tolerar transitorios de arranque y cortocircuitos temporales sin saturar el núcleo magnético).
-* **Tipo:** Blindado (*Shielded*) de montaje superficial (SMD), idealmente encapsulado metálico de bajo perfil (ej. 1212 o 2016).
+#### Selected Component (Purchase Specification):
+* **Recommended Commercial Value:** **3.3 μH** (It can be increased to **4.7 μH** to obtain an output with lower ripple).
+* **Saturation Current (\(I_{SAT}\)):** Minimum **1.5 A** (To withstand startup transients and temporary short circuits without saturating the magnetic core.).
+* **Typw:** Shielded (SMD), ideally in a low-profile metal package (ex. 1212 or 2016).
 
 ---
 
-### Capacitores de Filtro Adicionales (MLCC, X5R/X7R)
-* **\(C_{IN}\) (Entrada del Buck):** **10 μH** / 10V (Cerámico, posicionado pegado al pin `VIN` del integrado).
-* **\(C_{OUT}\) (Salida del Buck / Entrada LDO):** **22 μH** / 10V (Cerámico, estabiliza el rizado del Buck y actúa como tanque de entrada para el AP2112K).
+### Additional Filter Capacitors (MLCC, X5R/X7R)
+* **\(C_{IN}\) (Buck input):** **10 μH** / 10V (Ceramic capacitor, positioned right next to the IC's `VIN` pin.).
+* **\(C_{OUT}\) (Buck output / LDO input):** **22 μH** / 10V (Ceramic; it stabilizes the Buck converter's ripple and acts as an input reservoir for the AP2112K.).
 
