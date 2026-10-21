@@ -14,7 +14,6 @@ Familia de tarjetas de desarrollo de **hardware abierto** basadas en microcontro
 **Comunes a ambas placas**
 
 - USB-C para alimentación, programación y comunicación (compatible con cargadores C-a-C)
-- Regulador de 3,3 V con protección de entrada y protección ESD en USB
 - Botones de reset y bootloader: carga de firmware por USB sin programador
 - Cabecera de depuración SDI para WCH-LinkE
 - LED de encendido, LED de usuario y LED RGB direccionable
