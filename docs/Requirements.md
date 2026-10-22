@@ -23,7 +23,7 @@ Este documento define qué debe incluir cada placa de la familia. Los códigos (
 ## Requerimientos específicos de la L103
 
 | ID | Requerimiento |
-|---|---|---|
+|---|---|
 O4 |   USB PD como sink, rango SPR (5, 9, 12, 15 y 20 V) |	
 O5 |   USB PD como source |
 O5 |   Puerto dedicado para pantalla OLED |
