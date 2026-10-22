@@ -2,49 +2,37 @@
 
 Este documento define qué debe incluir cada placa de la familia. Los códigos (O = obligatorio, R = recomendado, D = deseable) provienen del análisis inicial de placas de desarrollo existentes y se mantienen para facilitar la trazabilidad en issues, commits y pull requests.
 
-| Placa | Microcontrolador | Encapsulado |
-|---|---|---|
-| X035 | CH32X035C8T6 | LQFP48 |
-| L103 | CH32L103 | LQFP48 |
-
-El desacoplo, el circuito de reset y demás elementos del circuito mínimo recomendados por los datasheets de WCH no se listan como requerimientos: forman parte obligatoria de cualquier diseño.
+| Placa | Microcontrolador |
+|---|---|
+| X035 | CH32X035C8T6 |
+| L103 | CH32L103 |
 
 ## Requerimientos comunes (X035 y L103)
 
 | ID | Requerimiento | Justificación |
 |---|---|---|
-| O1 | USB-C con dos resistencias CC de 5,1 kΩ a GND, una por línea | Sin ellas la placa no se alimenta con cargadores y cables C-a-C |
-| O2 | 	Regulador de 3,3 V con margen de corriente y disipación adecuada. En la L103 se alimenta desde el riel de 5 V del buck (O13), nunca directo desde VBUS | Evita caídas de tensión al conectar periféricos |
-| O3 | Protección de entrada: polaridad inversa y OR entre fuentes de alimentación | Evita daños por conexión errónea o por varias fuentes a la vez |
-| O4 | Botón de reset | Queja frecuente en placas que no lo incluyen |
-| O5 | Botón o jumper de acceso al bootloader | Permite cargar firmware por USB sin programador |
-| O6 | LED de encendido y al menos un LED de usuario en un pin serigrafiado | Diagnóstico básico y primer programa (blink) |
-| O7 | Cabecera de depuración WCH SDI de 4 pines: DIO, CLK, 3V3, GND | Programación y depuración con WCH-LinkE |
-| O8 | Todos los pines en paso de 2,54 mm, en dos filas, con serigrafía clara | Uso en protoboard; la falta de rotulación es la queja más común |
-| O9 | Ancho compatible con protoboard, dejando al menos una fila libre por lado | Uso en protoboard estándar |
-| O10 | Documentación abierta completa: pinout, esquemático PDF, proyecto KiCad, BOM con referencias, guía de inicio | Requisito de hardware abierto y de certificación OSHWA |
-| R2 | UART accesible en los headers | Mensajes por serie sin depurador |
-| R3 | Agujeros de montaje | Fijación en proyectos y carcasas |
-| R4 | Protección ESD en las líneas USB (D+, D−, VBUS). En la L103, todo lo conectado a VBUS debe tolerar al menos 22 V (ver O14) | Robustez ante descargas al conectar el cable |
-| R5 | Jumper o punto de medición de consumo en la alimentación del MCU | Medir el consumo real del microcontrolador |
-| R7 | Serigrafía completa: marca del pin 1, nombre de la placa, revisión (`${REVISION}`), commit (`${GIT_HASH}`) y orientación del USB | Trazabilidad de cada placa física a su versión del diseño |
-| D3 | LED RGB direccionable compatible con 3,3 V | Indicación de estado y demostraciones |
+| O1 | Todos los pines en paso de 2,54 mm, en dos filas, con serigrafía clara | Uso en protoboard; la falta de rotulación es la queja más común |
+| O2 | Ancho compatible con protoboard, dejando al menos una fila libre por lado | Uso en protoboard estándar |
+| O3 | Documentación abierta completa: pinout, esquemático PDF, proyecto KiCad, BOM con referencias, guía de inicio | Requisito de hardware abierto y de certificación OSHWA |
+| R1 | UART accesible en los headers | Mensajes por serie sin depurador |
+| R2 | Agujeros de montaje | Fijación en proyectos y carcasas |
+| R3 | Jumper o punto de medición de consumo en la alimentación del MCU | Medir el consumo real del microcontrolador |
+| R4 | Serigrafía completa: marca del pin 1, nombre de la placa, revisión (`${REVISION}`), commit (`${GIT_HASH}`) y orientación del USB | Trazabilidad de cada placa física a su versión del diseño |
+| D1 | LED RGB direccionable compatible con 3,3 V | Indicación de estado y demostraciones |
 
 ## Requerimientos específicos de la L103
 
-| ID | Requerimiento | Justificación |
+| ID | Requerimiento |
 |---|---|---|
-O11 |	USB PD como sink, rango SPR (5, 9, 12, 15 y 20 V), con CC1/CC2 conectados a PB6/PB7 |	Aprovecha el controlador y PHY USB PD integrados (BMC y CRC por hardware, PD 2.0/3.0)
-O12 |	Protección en serie de CC1/CC2 contra cortocircuito a VBUS, con ESD (TCPP01-M12 de ST o CH211 de WCH) |	PB6/PB7 toleran 5,5 V como máximo absoluto; un TVS no protege contra un corto sostenido a 20 V
-O13 |	Regulador conmutado (buck) de VBUS a 5 V con entrada de 4,5–28 V (p. ej. TPS54202, LCSC C191884) |	Un regulador lineal desde 20 V disiparía demasiado
-O14 |	Protección de sobretensión en VBUS con MOSFET de corte, y TVS en VBUS con tensión de trabajo ≥ 22 V	Protege la placa ante fuentes defectuosas. | Los arreglos ESD USB pensados para VBUS de 5 V no sirven aquí
-R9 |	Cristal de 32,768 kHz en PC14/PC15 y alimentación VBAT para el RTC desde pila de botón o desde 3V3 con diodo, nunca desde la LiPo	Aprovecha el RTC y los modos de bajo consumo. | VBAT admite como máximo 3,6 V y una LiPo cargada llega a 4,2 V
-R10 |	Footprint para transceptor CAN, conectado a los pines remapeados PB8/PB9	| Aprovecha el controlador CAN (con CAN FD en el C8T6) sin chocar con USB en PA11/PA12
-R11 |	VBUS negociado disponible en un header dedicado, a través de un interruptor de carga controlado por GPIO, con fusible PTC, LED indicador y serigrafía de advertencia de tensión	| Permite usar la placa como fuente PD programable para otros proyectos
-R12 |	Medición de la tensión de VBUS con divisor (≈ ×11) hacia un canal ADC; opcionalmente también hacia un comparador interno para corte rápido de R11 |	Verificar que el contrato negociado se cumple antes de habilitar la salida
-D1 |	Cargador LiPo con conector JST-PH y medición del voltaje de batería mediante divisor |	Uso portátil; complementa el bajo consumo del chip
-D10 |	Medición de la corriente de la salida R11 con resistencia shunt amplificada por el OPA/PGA interno	| Demuestra los periféricos analógicos del chip
-D11 |	Modo source de 5 V mediante un segundo interruptor de carga, deshabilitado por defecto |	Permite experimentar con los roles source y DRP del controlador PD
+O4 |   USB PD como sink, rango SPR (5, 9, 12, 15 y 20 V) |	
+O5 |   USB PD como source |
+O5 |   Puerto dedicado para pantalla OLED |
+O6 |   Medición de potencia entregada a la carga |
+R5 |   Footprint para transceptor CAN	|
+R6 |   Medición de la tensión de VBUS |
+D2 |   Soporte para batería LiPo con conector JST-PH |	
+D3 |   Medición de la corriente de la salida R11 con resistencia shunt amplificada por el OPA/PGA interno	| 
+D4 |   Modo source de 5 V mediante un segundo interruptor de carga, deshabilitado por defecto |	
 
 ## Requerimientos específicos de la X035
 
