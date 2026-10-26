@@ -22,11 +22,25 @@ Familia de tarjetas de desarrollo de **hardware abierto** basadas en microcontro
 - Agujeros de montaje
 - Soldable a mano: sin encapsulados QFN ni BGA
 
-**Solo en la L103**
-
-- Cargador de batería LiPo con conector JST-PH y medición del voltaje de batería
-- Cristal de 32,768 kHz y VBAT para el reloj de tiempo real
-- Footprint para transceptor CAN
+**Funcionalidades de la L103**
+- Negociar 5, 9, 15 o 20 V con cualquier cargador USB-C PD, y 12 V si el cargador lo ofrece.
+- Ajustar el voltaje en pasos finos con cargadores PPS, si el firmware lo implementa.
+- Alimentar otros proyectos (motores, tiras LED, bombas, otras placas) a través de la bornera de salida.
+- Encender y apagar la salida de potencia desde el firmware.
+- Protección cortocircuito y sobrecorriente en la salida.
+- Medir en tiempo real el voltaje, la corriente y la potencia que consumen las cargas.
+- Medir el consumo del microcontrolador en modo activo.
+- Medir el consumo real en sleep con un instrumento externo (PPK2 u otro) mediante jumpers de corte.
+- Funcionar con batería Li-ion 1S y recargarla por USB-C.
+- Usar la placa mientras la batería se carga.
+- Ver el estado de carga y leer el voltaje de la batería.
+- Conectar pantallas OLED y sensores por el puerto Qwiic/STEMMA QT.
+- Comunicarse por bus CAN, si se instala el transceptor opcional.
+- Comunicarse con el PC por USB mientras la placa negocia PD.
+- Ejecutar modelos ML ultraligeros sobre datos de energía y sensores sencillos: clasificar cargas, detectar anomalías y estimar el estado de la batería.
+- Registrar datos y enviarlos al PC para entrenar modelos.
+- Cargar firmware por USB sin herramientas extra.
+- Depurar con WCH-LinkE mediante pads SDI.
 
 Los requerimientos completos, con su justificación, están en [docs/requirements.md](docs/requirements.md).
 ## Empezar
