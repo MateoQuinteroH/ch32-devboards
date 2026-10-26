@@ -1,7 +1,5 @@
 # Requerimientos de la familia CH32 DevBoards
 
-Este documento define qué debe incluir cada placa de la familia. Los códigos (O = obligatorio, R = recomendado, D = deseable) provienen del análisis inicial de placas de desarrollo existentes y se mantienen para facilitar la trazabilidad en issues, commits y pull requests.
-
 | Placa | Microcontrolador |
 |---|---|
 | X035 | CH32X035C8T6 |
@@ -22,60 +20,71 @@ Este documento define qué debe incluir cada placa de la familia. Los códigos (
 
 ## Requerimientos específicos de la L103
 
-| ID | Requerimiento |
-|---|---|
-O4 |   USB PD como sink, rango SPR (5, 9, 12, 15 y 20 V) |	
-O5 |   USB PD como source |
-O5 |   Puerto dedicado para pantalla OLED |
-O6 |   Medición de potencia entregada a la carga |
-R5 |   Footprint para transceptor CAN	|
-R6 |   Medición de la tensión de VBUS |
-D2 |   Soporte para batería LiPo con conector JST-PH |	
-D3 |   Medición de la corriente de la salida R11 con resistencia shunt amplificada por el OPA/PGA interno	| 
-D4 |   Modo source de 5 V mediante un segundo interruptor de carga, deshabilitado por defecto |	
+# Generales
 
-## Requerimientos específicos de la X035
+* R-01. Microcontrolador WCH CH32L103.
+* R-02. Precio de venta muy por debajo de 25 USD. El costo unitario objetivo queda por definir tras cotizar el BOM.
+* R-03. Formato físico por definir. Candidatos: Feather o XIAO.
+* R-04. Hardware open source, con licencia abierta explícita.
 
-Ninguno por ahora. La X035 trabaja fija a 3,3 V.
+# USB y potencia
 
-## Descartados
+* R-05. Puerto USB-C en rol PD Sink, hasta 20 V. Sin rol Source ni DRP en la v1.
+* R-06. Datos USB Full Speed simultáneos con la negociación PD.
+* R-07. Salida a bornera con el voltaje negociado, controlada por load switch.
+* R-08. eFuse con límite de corriente en la salida. Corriente máxima por definir: 3 A con cable normal, 5 A requiere e-marker.
+* R-09. La bornera arranca apagada hasta que el firmware la habilita.
+* R-10. Comportamiento de la bornera sin cargador PD por definir: apagada o voltaje de batería.
+* R-11. Riel de 3,3 V con regulador de muy bajo consumo en reposo.
 
-| ID | Requerimiento | Motivo |
-|---|---|---|
-R1 |	Conector Qwiic / STEMMA QT |	Descartado
-R6 |	Desacoplo según datasheet |	No es un requerimiento: es parte obligatoria del diseño
-R8 |	Selección de lógica 3,3 V / 5 V en la X035 |	Descartado; la X035 trabaja a 3,3 V
-D2 |	Footprint para flash SPI / EEPROM I²C	| Descartado
-D4 |	Pads castellados	| Descartado
-D5 |	Cabecera Cortex de 10 pines a 1,27 mm	| Los CH32 usan SDI de 2 hilos; ya cubierto por O7
-D6 |	Pin AREF / VREF accesible	| Descartado
-D7 |	Zona de prototipado	| Descartado
-D8 |	Cristal HSE en la L103	| Descartado (ver punto abierto sobre CAN)
-D9 |	Compatibilidad con bases mikroBUS	| Descartado
-D12 |	USB PD EPR (28–48 V) en la L103	| Exige rediseñar toda la cadena de VBUS para 48 V. La v1 se limita a SPR (20 V)
+# Batería
 
-## Arquitectura de alimentación de la L103
-USB-C ─ TVS ≥22 V ─ MOSFET OVP (O14) ─ VBUS_PROT ─┬─ buck 5 V (O13) ─ SYS_5V ─┬─ cargador LiPo (D1)
-   │                                              │                          └─ OR con batería (O3) ─ LDO 3,3 V (O2) ─ MCU
-   CC1/CC2 ─ protección CC (O12) ─ PB6/PB7        ├─ interruptor de carga + PTC ─ header VBUS_OUT (R11)
-                                                  └─ divisor ×11 ─ ADC / CMP (R12)
+* R-12. Batería 1S Li-ion/LiPo con conector JST-PH 2.0 y polaridad Adafruit.
+* R-13. Cargador conmutado con power-path.
+* R-14. Entrada para NTC y LED de estado de carga.
+* R-15. Lectura del voltaje de la batería por ADC.
 
-En batería, el buck queda fuera de la ruta para que su consumo en reposo no domine el modo Standby del MCU.
+# Medición
 
-## Puntos de diseño abiertos
+* R-16. Medición de voltaje y corriente de la bornera, con INA externo o con shunt más el OPA interno (por decidir según costo).
+* R-17. Jumpers de corte para medir el consumo del micro con instrumento externo.
+* R-18. LEDs desconectables para medir el sleep real.
+* R-19. Consumo total de la placa en sleep medido y publicado.
 
-Consecuencias de los requerimientos que deben resolverse durante el diseño del esquemático.
+# Protección
 
-* Protección de CC (O12). Elegir entre TCPP01-M12 (ST: mejor documentado, en LCSC C1121848, OVP de VBUS hasta 22 V, orientado a sink) y CH211 (WCH: hasta 28 V, menos documentación en inglés). Si se usa TCPP01-M12, verificar en su datasheet (DS12900) cómo convive su función de dead battery con las Rd externas de O1.
-* Encapsulados QFN. Las protecciones de CC disponibles son QFN, lo que choca con el criterio "soldable a mano: sin QFN ni BGA" del README. Propuesta: el MCU y los pasivos siguen siendo soldables a mano, y la protección PD se monta con ensamblado PCBA.
-* Rd fijas y modo source (O1, D11). Con Rd fijas de 5,1 kΩ el modo source no funciona. Si se mantiene D11, las Rd deben poder desconectarse (MOSFET o jumper). Decidir antes del layout.
-Corriente de la salida VBUS (R11). Limitar la corriente anunciada en el firmware a lo que soporten el header de 2,54 mm, las pistas y el interruptor de carga.
-* CAN sin HSE (R10, D8). Con D8 descartado, el CAN usa el HSI interno. Comprobar que su tolerancia sea suficiente para las velocidades objetivo; para CAN FD a alta velocidad conviene reconsiderar un footprint de HSE en PD0/PD1.
-* Capacitancia en CC. La especificación USB PD exige entre 200 y 600 pF en cada línea CC; sumar la capacitancia de la protección y completar con condensadores.
-* LED RGB a 3,3 V (D3). El WS2812B clásico requiere al menos 3,5 V. Elegir una variante que funcione a 3,3 V, en encapsulado soldable a mano (5050 o 3535).
-* Ubicación del jumper de consumo (R5). Debe medir solo el consumo del microcontrolador, excluyendo cargador, LED RGB y circuito de VBUS.
-* Regulador con batería (O2, D1). Elegir un LDO de muy baja caída y bajo consumo en reposo, y el circuito que alterna entre SYS_5V y batería.
-* Firmware PD. Partir del ejemplo sink del EVT oficial de WCH. No anunciar PPS hasta probarlo; las fuentes de WCH no lo confirman.
+* R-20. TVS en VBUS y protección contra polaridad inversa.
+* R-21. Todo lo conectado a VBUS soporta 25 V o más.
+
+# Expansión
+
+* R-22. Conector Qwiic/STEMMA QT (I2C).
+* R-23. Footprint opcional para transceptor CAN y su conector.
+
+# Software
+
+* R-24. Bootloader USB de fábrica compatible con herramientas abiertas; ideal UF2.
+* R-25. Pads SDI para WCH-LinkE.
+* R-26. Soporte en PlatformIO desde el lanzamiento; Arduino cuando el core sea estable.
+* R-27. SDK en C para MounRiver o GCC.
+* R-28. Librería con API simple, por ejemplo pd.request(), power.read() y model.classify().
+* R-29. Tres demos: fuente programable con OLED, perfilador de consumo y clasificador de cargas con ML.
+* R-30. Herramienta de registro de datos a CSV y scripts en Python para entrenar y exportar modelos.
+
+#Documentación
+
+* R-31. Bilingüe español–inglés.
+* R-32. Esquemáticos comentados, cálculos de diseño, archivos KiCad y BOM.
+* R-33. Hoja de datos de la placa con mediciones reales y límites de la bornera.
+* R-34. Guía de seguridad para trabajar con 20 V.
+* R-35. Tutoriales graduales y diario de diseño público.
+
+# Marca y cumplimiento
+
+* R-36. No usar el logo USB ni declarar certificación USB-IF.
+* R-37. No incluir la celda de litio en envíos internacionales.
+
+
 
 ## Formato físico
 
